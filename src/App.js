@@ -6,18 +6,25 @@ import { GoogleLogin, googleLogout } from "@react-oauth/google";
 import "./App.css";
 
 function App() {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState({});
 
   const createOrGetUser = (res) => {
-    const decoded = jwtDecode(res.credential);
-    console.log(decoded);
+    const userCredentials = jwtDecode(res.credential);
+    setUser((user) => ({
+      ...user,
+      _id: userCredentials.sub,
+      _type: "user",
+      name: userCredentials.name,
+      image: userCredentials.picture,
+    }));
   };
+  // console.log(user);
+
   return (
     <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_API_TOKEN}>
       <div className="App">
         <header className="App-header">
-          <button onClick={googleLogout()}>LOGOUT</button>
-          {user ? (
+          {/* {user ? (
             <div>Logged in</div>
           ) : (
             <GoogleLogin
@@ -26,7 +33,17 @@ function App() {
                 console.log("Login Failed");
               }}
             />
-          )}
+          )} */}
+          <GoogleLogin
+            onSuccess={(res) => createOrGetUser(res)}
+            onError={() => {
+              console.log("Login Failed");
+            }}
+          />
+          <div>
+            <h1>{user.name}</h1>
+            <img src={user.image} alt="" />
+          </div>
         </header>
       </div>
     </GoogleOAuthProvider>
