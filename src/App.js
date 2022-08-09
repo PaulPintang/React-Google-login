@@ -13,12 +13,6 @@ function App() {
 
   const createOrGetUser = (res) => {
     const userCredentials = jwtDecode(res.credential);
-    if (localStorage.getItem("user" === null)) {
-      localStorage.setItem("user", JSON.stringify([]));
-    } else {
-      let user = JSON.parse(localStorage.getItem("user"));
-      setUser(user);
-    }
     setUser((user) => ({
       ...user,
       _id: userCredentials.sub,
